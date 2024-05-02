@@ -1,6 +1,7 @@
-#include "driver/pcnt.h"
 #include <Arduino.h>
-#include <DabbleESP32.h>
+
+#include "DabbleESP32.h"
+#include "driver/pcnt.h"
 
 #include "Encoder.hpp"
 
