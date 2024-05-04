@@ -75,16 +75,16 @@ void loop() {
         case 0: // no button is pressed
             break;
 
-        case 1: // UP is pressed
+        case 1: { // UP is pressed
             Serial.println("motorA forward");
             Serial.println("motorB forward");
             encoderA.clear();
             encoderB.clear();
             const auto difference = encoderA.getCount() + encoderB.getCount();
-            const auto dutyB = (210 + (45 * difference / 10) / ((1 + (difference / 10) ^ 2) ^ (1 / 2))) / 255;
+            const auto dutyB = 0.8F + 0.01765F * difference / sqrtf(1 + sq(difference / 10.0F));
             motorA.setPower(0.8);
             motorB.setPower(dutyB);
-            break;
+        } break;
 
         case 2: // DOWN is pressed
             Serial.println("motorA back");
