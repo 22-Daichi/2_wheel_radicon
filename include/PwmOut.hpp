@@ -5,7 +5,7 @@
 struct PwmOut {
     uint8_t pinId;
     uint8_t channel;
-    uint8_t periodUs;
+    uint16_t periodUs;
     uint8_t dutyInt;
 
     void setup() {
