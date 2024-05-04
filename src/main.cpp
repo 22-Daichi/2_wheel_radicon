@@ -26,25 +26,10 @@ Encoder encoderB = {34, 23, PCNT_CHANNEL_0, PCNT_CHANNEL_1, PCNT_UNIT_1};
 #define CUSTOM_SETTINGS
 #define INCLUDE_GAMEPAD_MODULE
 
-int16_t count1 = 0;
-int16_t count2 = 0;
-int16_t difference = count1 + count2;
-
 int16_t n = 0; // tuika
 
 const int STBY = 12;
 
-// A RIGHT B LEFT
-// IN 1 LEFT IN 2 RIGHT
-
-/*void IRAM_ATTR get_count(){
- //Dabble.processInput();
- pcnt_get_counter_value(PCNT_UNIT_0, &count1);
- pcnt_get_counter_value(PCNT_UNIT_1, &count2);
- //difference = count1 + count2;
- ledcWrite( pwmch_2 , 210+(45*difference/10)/((1+(difference/10)^2)^(1/2)));
-
-}*/
 void setup() {
     // put your setup code here, to run once:
     motorA.setup();
@@ -74,79 +59,82 @@ void loop() {
     Dabble.processInput(); // this function is used to refresh data obtained from smartphone.Hence calling this function
                            // is mandatory in order to get data properly from your mobile.
 
-    if (GamePad.isUpPressed()) {
-        encoderA.clear();
-        encoderB.clear();
-        count1 = encoderA.getCount();
-        count2 = encoderB.getCount();
-        // difference = count1 + count2;
-        // Serial.println("motorA forward");
-        motorA.setPower(0.8);
-        // Serial.println("motorB forward");
-        // ledcWrite( pwmch_2 , 210+(45*difference/10)/((1+(difference/10)^2)^(1/2)));
-        motorB.setPower(0.8);
-        // timerAlarmEnable(timer);
-        n = 1;
-    }
+    uint8_t gamePadState = GamePad.isUpPressed()         ? 1U
+                           : GamePad.isDownPressed()     ? 2U
+                           : GamePad.isLeftPressed()     ? 3U
+                           : GamePad.isRightPressed()    ? 4U
+                           : GamePad.isStartPressed()    ? 5U
+                           : GamePad.isSelectPressed()   ? 6U
+                           : GamePad.isTrianglePressed() ? 7U
+                           : GamePad.isCirclePressed()   ? 8U
+                           : GamePad.isCrossPressed()    ? 9U
+                           : GamePad.isSquarePressed()   ? 10U
+                                                         : 0U;
 
-    if (n == 1) {
-        count1 = encoderA.getCount();
-        count2 = encoderB.getCount();
-        difference = count1 + count2;
-        ledcWrite(motorB.pinPower.channel, 210 + (45 * difference / 10) / ((1 + (difference / 10) ^ 2) ^ (1 / 2)));
-        delay(100);
-    }
-    if (GamePad.isDownPressed()) {
-        // timerAlarmDisable(timer);2
-        n = 0;
-        // Serial.println("motorA back");
-        motorA.setPower(-0.8);
-        // Serial.println("motorB back");
-        motorB.setPower(-0.8);
-    }
-    if (GamePad.isCrossPressed()) {
-        n = 0;
-        // timerAlarmDisable(timer);3
-        // Serial.println("motorA stop");
-        motorA.stop();
-        // Serial.println("motorB stop");
-        motorB.stop();
-    }
-    if (GamePad.isCirclePressed()) {
-        // timerAlarmDisable(timer);4
-        n = 0;
-        // Serial.println("motorA back");
-        motorA.setPower(-0.8);
-        // Serial.println("motorB forward");
-        motorB.setPower(0.8);
-    }
+    switch (gamePadState) {
+        case 0: // no button is pressed
+            break;
 
-    if (GamePad.isSquarePressed()) {
-        // timerAlarmDisable(timer);5
-        n = 0;
-        // Serial.println("motorA forward");
-        motorA.setPower(0.8);
-        // rial.println("motorB back");
-        motorB.setPower(-0.8);
-    }
-    if (GamePad.isRightPressed()) {
-        // timerAlarmDisable(timer);6
-        n = 0;
-        // Serial.println("motorA slow");
-        motorA.setPower(0.8);
-        // Serial.println("motorB forward");
-        motorB.setPower(1.0);
-    }
-    if (GamePad.isLeftPressed()) {
-        // timerAlarmDisable(timer);7
-        n = 0;
-        // Serial.println("motorA forward");
-        motorA.setPower(1.0);
-        // Serial.println("motorB slow");
-        motorB.setPower(0.8);
-    }
-    if (GamePad.isStartPressed()) {
-        encoderA.clear();
-        encoderB.clear();
+        case 1: // UP is pressed
+            Serial.println("motorA forward");
+            Serial.println("motorB forward");
+            encoderA.clear();
+            encoderB.clear();
+            const auto difference = encoderA.getCount() + encoderB.getCount();
+            const auto dutyB = (210 + (45 * difference / 10) / ((1 + (difference / 10) ^ 2) ^ (1 / 2))) / 255;
+            motorA.setPower(0.8);
+            motorB.setPower(dutyB);
+            break;
+
+        case 2: // DOWN is pressed
+            Serial.println("motorA back");
+            Serial.println("motorB back");
+            motorA.setPower(-0.8);
+            motorB.setPower(-0.8);
+            break;
+
+        case 3: // LEFT is pressed
+            Serial.println("motorA forward");
+            Serial.println("motorB slow");
+            motorA.setPower(1.0);
+            motorB.setPower(0.8);
+            break;
+
+        case 4: // RIGHT is pressed
+            Serial.println("motorA slow");
+            Serial.println("motorB forward");
+            motorA.setPower(0.8);
+            motorB.setPower(1.0);
+            break;
+
+        case 5: // START is pressed
+            Serial.println("clear encoder counts");
+            encoderA.clear();
+            encoderB.clear();
+            break;
+
+        case 8: // CIRCLE is pressed
+            Serial.println("motorA back");
+            Serial.println("motorB forward");
+            motorA.setPower(-0.8);
+            motorB.setPower(0.8);
+            break;
+
+        case 9: // CROSS is pressed
+            Serial.println("motorA stop");
+            Serial.println("motorB stop");
+            motorA.stop();
+            motorB.stop();
+            break;
+
+        case 10: // SQUARE is pressed
+            Serial.println("motorA forward");
+            Serial.println("motorB back");
+            motorA.setPower(0.8);
+            motorB.setPower(-0.8);
+            break;
+
+        default:
+            break;
     }
 }
