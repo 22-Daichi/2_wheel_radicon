@@ -4,6 +4,19 @@
 #include "driver/pcnt.h"
 
 #include "Encoder.hpp"
+#include "Motor.hpp"
+
+// motor A
+DigitalOut motorFwdA = {27, 0};
+DigitalOut motorRevA = {26, 0};
+PwmOut motorPowA = {25, 0, 12800, 0};
+Motor motorA = {motorFwdA, motorRevA, motorPowA, 0};
+
+// motor B
+DigitalOut motorFwdB = {32, 0};
+DigitalOut motorRevB = {33, 0};
+PwmOut motorPowB = {13, 1, 12800, 0};
+Motor motorB = {motorFwdB, motorRevB, motorPowB, 0};
 
 Encoder encoderA = {21, 4, PCNT_CHANNEL_0, PCNT_CHANNEL_1, PCNT_UNIT_0};
 Encoder encoderB = {34, 23, PCNT_CHANNEL_0, PCNT_CHANNEL_1, PCNT_UNIT_1};
@@ -12,10 +25,6 @@ Encoder encoderB = {34, 23, PCNT_CHANNEL_0, PCNT_CHANNEL_1, PCNT_UNIT_1};
 
 #define CUSTOM_SETTINGS
 #define INCLUDE_GAMEPAD_MODULE
-#define motorAp 25
-#define motorBp 13
-#define pwmch_1 0
-#define pwmch_2 1
 
 int16_t count1 = 0;
 int16_t count2 = 0;
@@ -23,13 +32,7 @@ int16_t difference = count1 + count2;
 
 int16_t n = 0; // tuika
 
-const int motorA1 = 27;
-const int motorA2 = 26;
-
 const int STBY = 12;
-
-const int motorB1 = 32; // IN1
-const int motorB2 = 33; // IN2
 
 // A RIGHT B LEFT
 // IN 1 LEFT IN 2 RIGHT
@@ -44,30 +47,10 @@ const int motorB2 = 33; // IN2
 }*/
 void setup() {
     // put your setup code here, to run once:
-    pinMode(motorA1, OUTPUT);
-    pinMode(motorA2, OUTPUT);
-    pinMode(motorAp, OUTPUT);
+    motorA.setup();
+    motorB.setup();
 
     pinMode(STBY, OUTPUT);
-
-    pinMode(motorB1, OUTPUT);
-    pinMode(motorB2, OUTPUT);
-    pinMode(motorBp, OUTPUT);
-
-    ledcSetup(pwmch_1, 12800, 8);
-    ledcSetup(pwmch_2, 12800, 8);
-
-    ledcAttachPin(motorAp, pwmch_1);
-    ledcAttachPin(motorBp, pwmch_2);
-
-    digitalWrite(motorA1, LOW);
-    digitalWrite(motorA2, LOW);
-    // ledcWrite( pwmch_1 , 0 );
-
-    digitalWrite(motorB1, LOW);
-    digitalWrite(motorB2, LOW);
-    // ledcWrite( pwmch_2 , 0 );
-
     digitalWrite(STBY, HIGH);
 
     encoderA.setup();
@@ -98,14 +81,10 @@ void loop() {
         count2 = encoderB.getCount();
         // difference = count1 + count2;
         // Serial.println("motorA forward");
-        ledcWrite(pwmch_1, 200);
-        digitalWrite(motorA1, HIGH);
-        digitalWrite(motorA2, LOW);
+        motorA.setPower(0.8);
         // Serial.println("motorB forward");
         // ledcWrite( pwmch_2 , 210+(45*difference/10)/((1+(difference/10)^2)^(1/2)));
-        ledcWrite(pwmch_2, 200);
-        digitalWrite(motorB1, HIGH);
-        digitalWrite(motorB2, LOW);
+        motorB.setPower(0.8);
         // timerAlarmEnable(timer);
         n = 1;
     }
@@ -114,81 +93,57 @@ void loop() {
         count1 = encoderA.getCount();
         count2 = encoderB.getCount();
         difference = count1 + count2;
-        ledcWrite(pwmch_2, 210 + (45 * difference / 10) / ((1 + (difference / 10) ^ 2) ^ (1 / 2)));
+        ledcWrite(motorB.pinPower.channel, 210 + (45 * difference / 10) / ((1 + (difference / 10) ^ 2) ^ (1 / 2)));
         delay(100);
     }
     if (GamePad.isDownPressed()) {
         // timerAlarmDisable(timer);2
         n = 0;
         // Serial.println("motorA back");
-        ledcWrite(pwmch_1, 200);
-        digitalWrite(motorA1, LOW);
-        digitalWrite(motorA2, HIGH);
+        motorA.setPower(-0.8);
         // Serial.println("motorB back");
-        ledcWrite(pwmch_2, 200);
-        digitalWrite(motorB1, LOW);
-        digitalWrite(motorB2, HIGH);
+        motorB.setPower(-0.8);
     }
     if (GamePad.isCrossPressed()) {
         n = 0;
         // timerAlarmDisable(timer);3
         // Serial.println("motorA stop");
-        digitalWrite(motorA1, LOW);
-        digitalWrite(motorA2, LOW);
-        ledcWrite(pwmch_1, 0);
+        motorA.stop();
         // Serial.println("motorB stop");
-        digitalWrite(motorB1, LOW);
-        digitalWrite(motorB2, LOW);
-        ledcWrite(pwmch_2, 0);
+        motorB.stop();
     }
     if (GamePad.isCirclePressed()) {
         // timerAlarmDisable(timer);4
         n = 0;
         // Serial.println("motorA back");
-        ledcWrite(pwmch_1, 200);
-        digitalWrite(motorA1, LOW);
-        digitalWrite(motorA2, HIGH);
+        motorA.setPower(-0.8);
         // Serial.println("motorB forward");
-        ledcWrite(pwmch_2, 200);
-        digitalWrite(motorB1, HIGH);
-        digitalWrite(motorB2, LOW);
+        motorB.setPower(0.8);
     }
 
     if (GamePad.isSquarePressed()) {
         // timerAlarmDisable(timer);5
         n = 0;
         // Serial.println("motorA forward");
-        ledcWrite(pwmch_1, 200);
-        digitalWrite(motorA1, HIGH);
-        digitalWrite(motorA2, LOW);
+        motorA.setPower(0.8);
         // rial.println("motorB back");
-        ledcWrite(pwmch_2, 200);
-        digitalWrite(motorB1, LOW);
-        digitalWrite(motorB2, HIGH);
+        motorB.setPower(-0.8);
     }
     if (GamePad.isRightPressed()) {
         // timerAlarmDisable(timer);6
         n = 0;
         // Serial.println("motorA slow");
-        ledcWrite(pwmch_1, 200);
-        digitalWrite(motorA1, HIGH);
-        digitalWrite(motorA2, LOW);
+        motorA.setPower(0.8);
         // Serial.println("motorB forward");
-        ledcWrite(pwmch_2, 256);
-        digitalWrite(motorB1, HIGH);
-        digitalWrite(motorB2, LOW);
+        motorB.setPower(1.0);
     }
     if (GamePad.isLeftPressed()) {
         // timerAlarmDisable(timer);7
         n = 0;
         // Serial.println("motorA forward");
-        ledcWrite(pwmch_1, 256);
-        digitalWrite(motorA1, HIGH);
-        digitalWrite(motorA2, LOW);
+        motorA.setPower(1.0);
         // Serial.println("motorB slow");
-        ledcWrite(pwmch_2, 200);
-        digitalWrite(motorB1, HIGH);
-        digitalWrite(motorB2, LOW);
+        motorB.setPower(0.8);
     }
     if (GamePad.isStartPressed()) {
         encoderA.clear();
