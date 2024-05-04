@@ -4,47 +4,63 @@
 
 #include "driver/pcnt.h"
 
-template<uint8_t PULSE_INPUT_PIN,
-         uint8_t PULSE_CTRL_PIN,
-         pcnt_channel_t PULSE_COUNTER_CHANNEL,
-         pcnt_unit_t PULSE_COUNTER_UNIT,
-         bool INCREMENT_ON_POSITIVE_EDGE>
 class PulseCounter {
+private:
+    const uint8_t pulseInputPin;
+    const uint8_t pulseCtrlPin;
+    const pcnt_channel_t pulseCounterChannel;
+    const pcnt_unit_t pulseCounterUnit;
+    const bool incrementOnPositiveEdge;
+
 public:
-    void setup() {
+    PulseCounter(uint8_t pulseInputPin,
+                 uint8_t pulseCtrlPin,
+                 pcnt_channel_t pulseCounterChannel,
+                 pcnt_unit_t pulseCounterUnit,
+                 bool incrementOnPositiveEdge)
+      : pulseInputPin{pulseInputPin}
+      , pulseCtrlPin{pulseCtrlPin}
+      , pulseCounterChannel{pulseCounterChannel}
+      , pulseCounterUnit{pulseCounterUnit}
+      , incrementOnPositiveEdge{incrementOnPositiveEdge} {}
+
+    inline void setup() const {
         config();
         pause();
         clear();
     }
-    void config() {
+    inline void config() const {
         pcnt_config_t config;
-        config.pulse_gpio_num = PULSE_INPUT_PIN;
-        config.ctrl_gpio_num = PULSE_CTRL_PIN;
-        if (INCREMENT_ON_POSITIVE_EDGE) {
+        config.pulse_gpio_num = pulseInputPin;
+        config.ctrl_gpio_num = pulseCtrlPin;
+        if (incrementOnPositiveEdge) {
             config.lctrl_mode = PCNT_MODE_KEEP;
             config.hctrl_mode = PCNT_MODE_REVERSE;
         } else {
             config.lctrl_mode = PCNT_MODE_REVERSE;
             config.hctrl_mode = PCNT_MODE_KEEP;
         }
-        config.channel = PULSE_COUNTER_CHANNEL;
-        config.unit = PULSE_COUNTER_UNIT;
+        config.channel = pulseCounterChannel;
+        config.unit = pulseCounterUnit;
         config.pos_mode = PCNT_COUNT_INC;
         config.neg_mode = PCNT_COUNT_DEC;
         pcnt_unit_config(&config);
     }
-    void pause() {
-        pcnt_counter_pause(PULSE_COUNTER_UNIT);
+    inline void pause() const {
+        pcnt_counter_pause(getUnit());
     }
-    void clear() {
-        pcnt_counter_clear(PULSE_COUNTER_UNIT);
+    inline void clear() const {
+        pcnt_counter_clear(getUnit());
     }
-    void resume() {
-        pcnt_counter_resume(PULSE_COUNTER_UNIT);
+    inline void resume() const {
+        pcnt_counter_resume(getUnit());
     }
-    int16_t getCount() {
+    inline pcnt_unit_t getUnit() const {
+        return pulseCounterUnit;
+    }
+    inline int16_t getCount() const {
         int16_t count;
-        pcnt_get_counter_value(PULSE_COUNTER_UNIT, &count);
+        pcnt_get_counter_value(getUnit(), &count);
         return count;
     }
 };

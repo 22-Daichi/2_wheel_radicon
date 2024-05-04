@@ -5,8 +5,8 @@
 
 #include "Encoder.hpp"
 
-Encoder<21, 4, PCNT_CHANNEL_0, PCNT_CHANNEL_1, PCNT_UNIT_0> encoderA;
-Encoder<34, 23, PCNT_CHANNEL_0, PCNT_CHANNEL_1, PCNT_UNIT_1> encoderB;
+Encoder encoderA = {21, 4, PCNT_CHANNEL_0, PCNT_CHANNEL_1, PCNT_UNIT_0};
+Encoder encoderB = {34, 23, PCNT_CHANNEL_0, PCNT_CHANNEL_1, PCNT_UNIT_1};
 
 // hw_timer_t* timer = NULL;
 

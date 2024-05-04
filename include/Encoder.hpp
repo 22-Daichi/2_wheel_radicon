@@ -4,33 +4,40 @@
 
 #include "PulseCounter.hpp"
 
-template<uint8_t PIN_A, uint8_t PIN_B, pcnt_channel_t CHANNEL_A, pcnt_channel_t CHANNEL_B, pcnt_unit_t UNIT>
 class Encoder {
 private:
-    PulseCounter<PIN_A, PIN_B, CHANNEL_A, UNIT, true> counterA;
-    PulseCounter<PIN_B, PIN_A, CHANNEL_B, UNIT, false> counterB;
+    const PulseCounter pulseCounterA;
+    const PulseCounter pulseCounterB;
 
 public:
-    void setup() {
-        counterA.config();
-        counterB.config();
+    Encoder(uint8_t pinA, uint8_t pinB, pcnt_channel_t channelA, pcnt_channel_t channelB, pcnt_unit_t unit)
+      : pulseCounterA{pinA, pinB, channelA, unit, false}
+      , pulseCounterB{pinB, pinA, channelB, unit, true} {}
+
+    inline void setup() const {
+        pulseCounterA.config();
+        pulseCounterB.config();
         pause();
         clear();
     }
 
-    void pause() {
-        pcnt_counter_pause(UNIT);
+    inline void pause() const {
+        pcnt_counter_pause(getUnit());
     }
 
-    void clear() {
-        pcnt_counter_clear(UNIT);
+    inline void clear() const {
+        pcnt_counter_clear(getUnit());
     }
 
-    void resume() {
-        pcnt_counter_resume(UNIT);
+    inline void resume() const {
+        pcnt_counter_resume(getUnit());
     }
 
-    int16_t getCount() {
-        return counterA.getCount();
+    inline pcnt_unit_t getUnit() const {
+        return pulseCounterA.getUnit();
+    }
+
+    inline int16_t getCount() const {
+        return pulseCounterA.getCount();
     }
 };
