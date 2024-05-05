@@ -11,17 +11,17 @@
 #define pwmch_1 0
 #define pwmch_2 1
 
-#define PULSE_INPUT_PIN1 21
+/* #define PULSE_INPUT_PIN1 21
 #define PULSE_CTRL_PIN1 4
 
 #define PULSE_INPUT_PIN2 34
-#define PULSE_CTRL_PIN2 23
+#define PULSE_CTRL_PIN2 23 */
 
-int16_t count1 = 0; 
+/* int16_t count1 = 0; 
 int16_t count2 = 0; 
 int16_t difference = count1 + count2;
 
-int16_t n = 0;//tuika
+int16_t n = 0;//tuika */
 
 const int motorA1 = 27;  
 const int motorA2 = 26;  
@@ -74,7 +74,7 @@ digitalWrite( motorB2, LOW );
   
 digitalWrite( STBY, HIGH );
 
-pcnt_config_t pcnt_config_A;//??????????(A?)   
+/* pcnt_config_t pcnt_config_A;//??????????(A?)   
         pcnt_config_A.pulse_gpio_num = PULSE_INPUT_PIN1;
         pcnt_config_A.ctrl_gpio_num = PULSE_CTRL_PIN1;
         pcnt_config_A.lctrl_mode = PCNT_MODE_REVERSE;
@@ -131,7 +131,7 @@ pcnt_unit_config(&pcnt_config_D);//???????D?
 pcnt_counter_pause(PCNT_UNIT_1);//????????
 pcnt_counter_clear(PCNT_UNIT_1);//???????
   
-pcnt_counter_resume(PCNT_UNIT_1);//??????   pcnt_config_C.ctrl_gpio_num = PULSE_CTRL_PIN1;
+pcnt_counter_resume(PCNT_UNIT_1);//??????   pcnt_config_C.ctrl_gpio_num = PULSE_CTRL_PIN1; */
   /* 
 timer = timerBegin(0, 8000, true);
 timerAttachInterrupt(timer, &get_count, true);
@@ -147,17 +147,16 @@ Serial.println( "Motor Standby" );
 
 
 void loop() {
-  // put your main code here, to run repeatedly:
   Dabble.processInput();             //this function is used to refresh data obtained from smartphone.Hence calling this function is mandatory in order to get data properly from your mobile.
   
   if (GamePad.isUpPressed())
   { 
-    pcnt_counter_clear(PCNT_UNIT_0);
+    /* pcnt_counter_clear(PCNT_UNIT_0);
     pcnt_counter_clear(PCNT_UNIT_1);
     pcnt_get_counter_value(PCNT_UNIT_0, &count1);
     pcnt_get_counter_value(PCNT_UNIT_1, &count2);
     //difference = count1 + count2;
-    //Serial.println("motorA forward");
+    //Serial.println("motorA forward"); */
     ledcWrite( pwmch_1 , 200);
     digitalWrite( motorA1, HIGH );
     digitalWrite( motorA2, LOW );
@@ -166,8 +165,8 @@ void loop() {
     ledcWrite( pwmch_2 , 200);
     digitalWrite( motorB1, HIGH );
     digitalWrite( motorB2, LOW );
-    //timerAlarmEnable(timer);
-    n = 1;
+    // timerAlarmEnable(timer);
+    // n = 1;
   }
 
   if (n == 1){
