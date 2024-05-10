@@ -26,4 +26,18 @@ struct MotorDrive
         digitalWrite(pinB, LOW);
         ledcWrite(channelNum, duty);
     }
+
+    void driveBackward(int duty)
+    {
+        digitalWrite(pinA, LOW);
+        digitalWrite(pinB, HIGH);
+        ledcWrite(channelNum, duty);
+    }
+
+    void stop()
+    {
+        digitalWrite(pinA, HIGH);
+        digitalWrite(pinB, HIGH);
+        ledcWrite(channelNum, 0);
+    }
 };

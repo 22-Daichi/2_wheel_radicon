@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <DabbleESP32.h>
-#include "driver/pcnt.h"
+#include <MotorDriver.hpp>
 
 #define CUSTOM_SETTINGS
 #define INCLUDE_GAMEPAD_MODULE
