@@ -4,10 +4,11 @@
 
 #define CUSTOM_SETTINGS
 #define INCLUDE_GAMEPAD_MODULE
-#define motorAp 25
-#define motorBp 13
-#define pwmch_1 0
-#define pwmch_2 1
+
+const int motorAp = 25;
+const int motorBp = 13;
+const int pwmch_1 = 0;
+const int pwmch_2 = 1;
 
 const int motorA1 = 27;
 const int motorA2 = 26;
@@ -50,7 +51,7 @@ void setup()
 
 void loop()
 {
-  Dabble.processInput(); 
+  Dabble.processInput();
   if (GamePad.isUpPressed())
   {
     ledcWrite(pwmch_1, 200);
@@ -95,7 +96,8 @@ void loop()
     digitalWrite(motorB2, LOW);
   }
 
-  if (GamePad.isSquarePressed()){ 
+  if (GamePad.isSquarePressed())
+  {
     // Serial.println("motorA forward");
     ledcWrite(pwmch_1, 200);
     digitalWrite(motorA1, HIGH);
@@ -105,7 +107,8 @@ void loop()
     digitalWrite(motorB1, LOW);
     digitalWrite(motorB2, HIGH);
   }
-  if (GamePad.isRightPressed()){
+  if (GamePad.isRightPressed())
+  {
     // Serial.println("motorA slow");
     ledcWrite(pwmch_1, 200);
     digitalWrite(motorA1, HIGH);
