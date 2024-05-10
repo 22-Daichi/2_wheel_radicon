@@ -40,18 +40,18 @@ void setup() {
 
     digitalWrite(STBY, HIGH);
 
-    Dabble.begin("Bluth");
+    ble::beginConnection("Bluth");
     Serial.begin(9600);
     Serial.println("Motor Standby");
 }
 
 void loop() {
-    using gamePad::Button;
+    using ble::gamePad::Button;
 
-    Dabble.processInput();
-    Button button = gamePad::pressedButton();
+    ble::inputProcess();
+    Button button = ble::gamePad::pressedButton();
     switch (button) {
-        case Button::Up:
+        if (button == Button::Up) {
             ledcWrite(pwmch_1, 200);
             digitalWrite(motorA1, HIGH);
             digitalWrite(motorA2, LOW);
@@ -59,7 +59,9 @@ void loop() {
             digitalWrite(motorB1, HIGH);
             digitalWrite(motorB2, LOW);
             break;
-        case Button::Down:
+        }
+
+        else if (button == Button::Down) {
             // Serial.println("motorA back");
             ledcWrite(pwmch_1, 200);
             digitalWrite(motorA1, LOW);
@@ -68,8 +70,9 @@ void loop() {
             ledcWrite(pwmch_2, 200);
             digitalWrite(motorB1, LOW);
             digitalWrite(motorB2, HIGH);
-            break;
-        case Button::Left:
+        }
+
+        else if (button == Button::Left) {
             // Serial.println("motorA forward");
             ledcWrite(pwmch_1, 256);
             digitalWrite(motorA1, HIGH);
@@ -78,8 +81,9 @@ void loop() {
             ledcWrite(pwmch_2, 200);
             digitalWrite(motorB1, HIGH);
             digitalWrite(motorB2, LOW);
-            break;
-        case Button::Right:
+        }
+
+        else if (button == Button::Right) {
             // Serial.println("motorA slow");
             ledcWrite(pwmch_1, 200);
             digitalWrite(motorA1, HIGH);
@@ -88,8 +92,9 @@ void loop() {
             ledcWrite(pwmch_2, 256);
             digitalWrite(motorB1, HIGH);
             digitalWrite(motorB2, LOW);
-            break;
-        case Button::Circle:
+        }
+
+        else if (button == Button::Circle) {
             // Serial.println("motorA back");
             ledcWrite(pwmch_1, 200);
             digitalWrite(motorA1, LOW);
@@ -98,8 +103,9 @@ void loop() {
             ledcWrite(pwmch_2, 200);
             digitalWrite(motorB1, HIGH);
             digitalWrite(motorB2, LOW);
-            break;
-        case Button::Cross:
+        }
+
+        else if (button == Button::Cross) {
             // Serial.println("motorA stop");
             digitalWrite(motorA1, LOW);
             digitalWrite(motorA2, LOW);
@@ -108,8 +114,9 @@ void loop() {
             digitalWrite(motorB1, LOW);
             digitalWrite(motorB2, LOW);
             ledcWrite(pwmch_2, 0);
-            break;
-        case Button::Square:
+        }
+
+        else if (button == Button::Square) {
             // Serial.println("motorA forward");
             ledcWrite(pwmch_1, 200);
             digitalWrite(motorA1, HIGH);
@@ -118,8 +125,6 @@ void loop() {
             ledcWrite(pwmch_2, 200);
             digitalWrite(motorB1, LOW);
             digitalWrite(motorB2, HIGH);
-            break;
-        default:
-            break;
+        }
     }
 }

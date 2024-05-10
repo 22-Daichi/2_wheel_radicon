@@ -2,6 +2,16 @@
 
 #include <DabbleESP32.h>
 
+namespace ble {
+
+auto beginConnection(std::__cxx11::string bleName) -> void {
+    Dabble.begin(bleName);
+}
+
+auto inputProcess() -> void {
+    Dabble.processInput();
+}
+
 namespace gamePad {
 
 enum class Button {
@@ -38,6 +48,8 @@ auto pressedButton() -> Button {
     } else {
         return Button::None;
     }
+}
+
 }
 
 }
