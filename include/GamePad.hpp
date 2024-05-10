@@ -2,7 +2,7 @@
 
 #include <DabbleESP32.h>
 
-namespace game_pad {
+namespace gamePad {
 
 enum class Button {
     None,

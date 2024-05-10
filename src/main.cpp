@@ -46,10 +46,10 @@ void setup() {
 }
 
 void loop() {
-    using game_pad::Button;
+    using gamePad::Button;
 
     Dabble.processInput();
-    Button button = game_pad::pressedButton();
+    Button button = gamePad::pressedButton();
     switch (button) {
         case Button::Up:
             ledcWrite(pwmch_1, 200);
