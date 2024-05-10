@@ -1,19 +1,29 @@
 #pragma once
 
 #include <Arduino.h>
-#include <MotorDriver.hpp>
 
 struct MotorDrive
 {
     int pinA;
     int pinB;
     int pwmPin;
-    int pwmChannel;
+    int channelNum;
+    int frequency;
+    // int dutyInt;
 
     void setup()
     {
         pinMode(pinA, OUTPUT);
         pinMode(pinB, OUTPUT);
         pinMode(pwmPin, OUTPUT);
+        ledcSetup(channelNum, frequency, 8);
+        ledcAttachPin(pwmPin, channelNum);
+    }
+
+    void driveForward(int duty)
+    {
+        digitalWrite(pinA, HIGH);
+        digitalWrite(pinB, LOW);
+        ledcWrite(channelNum, duty);
     }
 };
