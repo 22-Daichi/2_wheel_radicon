@@ -1,9 +1,7 @@
 #include <Arduino.h>
-#include <DabbleESP32.h>
 #include <MotorDriver.hpp>
 
-#define CUSTOM_SETTINGS
-#define INCLUDE_GAMEPAD_MODULE
+#include "GamePad.hpp"
 
 const int motorR1 = 27;
 const int motorR2 = 26;
@@ -20,70 +18,61 @@ const int STBY = 12;
 const int pwmFrequency = 12800;
 
 MotorDrive motorRight = {
-    motorR1,
-    motorR2,
-    motorRp,
-    pwmChannelRight,
-    pwmFrequency,
+  motorR1,
+  motorR2,
+  motorRp,
+  pwmChannelRight,
+  pwmFrequency,
 };
 
 MotorDrive motorLeft = {
-    motorL1,
-    motorL2,
-    motorLp,
-    pwmChannelLeft,
-    pwmFrequency,
+  motorL1,
+  motorL2,
+  motorLp,
+  pwmChannelLeft,
+  pwmFrequency,
 };
 
-void setup()
-{
-  motorRight.setup();
-  motorLeft.setup();
-  pinMode(STBY, OUTPUT);
-  digitalWrite(STBY, HIGH);
-  motorRight.neutral();
-  motorLeft.neutral();
-  Dabble.begin("Bluth");
-  Serial.begin(9600);
-  Serial.println("Motor Standby");
+void setup() {
+    motorRight.setup();
+    motorLeft.setup();
+    pinMode(STBY, OUTPUT);
+    digitalWrite(STBY, HIGH);
+    motorRight.neutral();
+    motorLeft.neutral();
+    ble::beginConnection("Bluth");
+    Serial.begin(9600);
+    Serial.println("Motor Standby");
 }
 
-void loop()
-{
-  Dabble.processInput();
-  if (GamePad.isUpPressed())
-  {
-    motorRight.driveForward(200);
-    motorLeft.driveForward(200);
-  }
+void loop() {
+    using ble::gamePad::Button;
+    Button button = ble::gamePad::pressedButton();
 
-  if (GamePad.isDownPressed())
-  {
-    motorRight.driveBackward(200);
-    motorLeft.driveBackward(200);
-  }
-  if (GamePad.isCrossPressed())
-  {
-    motorRight.stop();
-    motorLeft.stop();
-  }
-  if (GamePad.isCirclePressed())
-  {
-    motorRight.driveBackward(200);
-    motorLeft.driveForward(200);
-  }
-
-  if (GamePad.isSquarePressed())
-  {
-    motorRight.driveForward(200);
-    motorLeft.driveBackward(200);
-  }
-  if (GamePad.isRightPressed())
-  {
-    motorRight.driveForward(200);
-  }
-  if (GamePad.isLeftPressed())
-  {
-    motorRight.driveBackward(200);
-  }
+    if (button == Button::Up) {
+        motorRight.driveForward(200);
+        motorLeft.driveForward(200);
+    }
+    else if (button == Button::Down) {
+        motorRight.driveBackward(200);
+        motorLeft.driveBackward(200);
+    }
+    else if (button == Button::Left) {
+        motorRight.driveBackward(200);
+    }
+    else if (button == Button::Right) {
+        motorRight.driveForward(200);
+    }
+    else if (button == Button::Circle) {
+        motorRight.driveBackward(200);
+        motorLeft.driveBackward(200);
+    }
+    else if (button == Button::Cross) {
+        motorRight.stop();
+        motorLeft.stop();
+    }
+    else if (button == Button::Square) {
+        motorRight.driveForward(200);
+        motorLeft.driveBackward(200);
+    }
 }
