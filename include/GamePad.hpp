@@ -2,6 +2,9 @@
 
 #include <DabbleESP32.h>
 
+#define CUSTOM_SETTINGS
+#define INCLUDE_GAMEPAD_MODULE
+
 namespace ble {
 
 auto beginConnection(std::__cxx11::string bleName) -> void {
@@ -31,21 +34,29 @@ enum class Button {
 auto pressedButton() -> Button {
     if (GamePad.isUpPressed()) {
         return Button::Up;
-    } else if (GamePad.isDownPressed()) {
+    }
+    else if (GamePad.isDownPressed()) {
         return Button::Down;
-    } else if (GamePad.isLeftPressed()) {
+    }
+    else if (GamePad.isLeftPressed()) {
         return Button::Left;
-    } else if (GamePad.isRightPressed()) {
+    }
+    else if (GamePad.isRightPressed()) {
         return Button::Right;
-    } else if (GamePad.isStartPressed()) {
+    }
+    else if (GamePad.isStartPressed()) {
         return Button::Start;
-    } else if (GamePad.isSelectPressed()) {
+    }
+    else if (GamePad.isSelectPressed()) {
         return Button::Select;
-    } else if (GamePad.isTrianglePressed()) {
+    }
+    else if (GamePad.isTrianglePressed()) {
         return Button::Triangle;
-    } else if (GamePad.isCirclePressed()) {
+    }
+    else if (GamePad.isCirclePressed()) {
         return Button::Circle;
-    } else {
+    }
+    else {
         return Button::None;
     }
 }
