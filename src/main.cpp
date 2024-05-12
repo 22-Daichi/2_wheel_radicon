@@ -80,8 +80,10 @@ void loop()
   }
   if (GamePad.isRightPressed())
   {
+    motorRight.driveForward(200);
   }
   if (GamePad.isLeftPressed())
   {
+    motorRight.driveBackward(200);
   }
 }
