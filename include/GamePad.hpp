@@ -1,5 +1,5 @@
 #pragma once
-
+// おまじない
 #include <DabbleESP32.h>
 
 #define CUSTOM_SETTINGS
